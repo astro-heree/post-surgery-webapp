@@ -35,7 +35,7 @@ const Login = (prop) => {
     }),
 
     onSubmit: (values) => {
-      console.log(values, "hi");
+     
       // write the logic of onSubmit here //
     },
   });

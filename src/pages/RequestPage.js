@@ -1,94 +1,177 @@
-import React from "react";
-import { Formik, Form, Field, ErrorMessage } from "formik";
+import React, { useState } from "react";
+import { useFormik } from "formik";
 import * as Yup from "yup";
-import "../styles/RequestPage.css";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import {
+  Col,
+  FormFeedback,
+  Input,
+  Label,
+  Form,
+  Button,
+  CardBody,
+  Card,
+} from "reactstrap";
 
-
-
-
-const validationSchema = Yup.object({
-  bodyPart: Yup.string().required("Please select Hip or Knee"),
-  sideOption: Yup.string().required("Please select a side"),
-  surgeonName: Yup.string()
-    .required("Please enter the surgeon's name")
-    .min(2, "Name must be at least 2 characters"),
-});
-
-const RequestPage = () => {
-  const handleSubmit = (values) => {
-    console.log("Submitted Data:", values);
-    toast.success("Your request has been submitted successfully!");
-  };
+const RequestForm = () => {
+  const validation = useFormik({
+    enableReinitialize: false,
+    initialValues: {
+      procedure: "",
+      side: "",
+      file: null,
+      surgeon_name: "",
+    },
+    validationSchema: Yup.object({
+      procedure: Yup.string().required("Please select a procedure"),
+      side: Yup.string().required("Please select a side"),
+      file: Yup.mixed().nullable(), // File is optional
+      surgeon_name: Yup.string().required("Please enter the surgeon's name"),
+    }),
+    onSubmit: (values) => {
+      console.log("Form Submitted", values);
+    },
+  });
 
   return (
-    <div>
-      <Formik
-        initialValues={{ bodyPart: "", sideOption: "", surgeonName: "", file: null }}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
-      >
-        {({ setFieldValue }) => (
-          <Form className="form">
-            <div className="input-group">
-              <label>
-                Choose Body Part<span className="required">*</span>:
-              </label>
-              <div>
-                <Field type="radio" id="hip" name="bodyPart" value="hip" />
-                <label htmlFor="hip">Hip</label>
-              </div>
-              <div>
-                <Field type="radio" id="knee" name="bodyPart" value="knee" />
-                <label htmlFor="knee">Knee</label>
-              </div>
-              <ErrorMessage name="bodyPart" component="div" className="error" />
+    <React.Fragment>
+      <Card>
+        <CardBody>
+          <Col md={12}>
+            <h2>Submit Your Request</h2>
+            <div style={{ minWidth: "20vh", maxWidth: "40vh" }}>
+              <Form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  validation.handleSubmit();
+                  return false;
+                }}
+              >
+                <Col>
+                  <Label className="form-label fw-semibold text-dark">
+                    Procedure
+                    <span className="text-danger">*</span>
+                  </Label>
+                </Col>
+                <Col>
+                  <Input
+                    name="procedure"
+                    type="select"
+                    onChange={validation.handleChange}
+                    onBlur={validation.handleBlur}
+                    value={validation.values.procedure}
+                    invalid={
+                      validation.touched.procedure &&
+                      validation.errors.procedure
+                        ? true
+                        : false
+                    }
+                  >
+                    <option value="">Select</option>
+                    <option value="hip">Hip</option>
+                    <option value="knee">Knee</option>
+                  </Input>
+                  {validation.touched.procedure && validation.errors.procedure ? (
+                    <FormFeedback type="invalid">
+                      {validation.errors.procedure}
+                    </FormFeedback>
+                  ) : null}
+                </Col>
+                <Col>
+                  <Label className="form-label fw-semibold text-dark">
+                    Side
+                    <span className="text-danger">*</span>
+                  </Label>
+                </Col>
+                <Col>
+                  <Input
+                    name="side"
+                    type="select"
+                    onChange={validation.handleChange}
+                    onBlur={validation.handleBlur}
+                    value={validation.values.side}
+                    invalid={
+                      validation.touched.side && validation.errors.side
+                        ? true
+                        : false
+                    }
+                  >
+                    <option value="">Select</option>
+                    <option value="left">Left</option>
+                    <option value="right">Right</option>
+                    <option value="both">Both</option>
+                  </Input>
+                  {validation.touched.side && validation.errors.side ? (
+                    <FormFeedback type="invalid">
+                      {validation.errors.side}
+                    </FormFeedback>
+                  ) : null}
+                </Col>
+                <Col>
+                  <Label className="form-label fw-semibold text-dark">
+                    Surgeon Name
+                    <span className="text-danger">*</span>
+                  </Label>
+                </Col>
+                <Col>
+                  <Input
+                    name="surgeon_name"
+                    type="text"
+                    placeholder="Enter surgeon name"
+                    onChange={validation.handleChange}
+                    onBlur={validation.handleBlur}
+                    value={validation.values.surgeon_name || ""}
+                    invalid={
+                      validation.touched.surgeon_name &&
+                      validation.errors.surgeon_name
+                        ? true
+                        : false
+                    }
+                  />
+                  {validation.touched.surgeon_name &&
+                  validation.errors.surgeon_name ? (
+                    <FormFeedback type="invalid">
+                      {validation.errors.surgeon_name}
+                    </FormFeedback>
+                  ) : null}
+                </Col>
+                <Col>
+                  <Label className="form-label fw-semibold text-dark">
+                    Upload File (Optional)
+                  </Label>
+                </Col>
+                <Col>
+                  <Input
+                    name="file"
+                    type="file"
+                    onChange={(event) =>
+                      validation.setFieldValue(
+                        "file",
+                        event.currentTarget.files[0]
+                      )
+                    }
+                    onBlur={validation.handleBlur}
+                    invalid={
+                      validation.touched.file && validation.errors.file
+                        ? true
+                        : false
+                    }
+                  />
+                  {validation.touched.file && validation.errors.file ? (
+                    <FormFeedback type="invalid">
+                      {validation.errors.file}
+                    </FormFeedback>
+                  ) : null}
+                </Col>
+                <Button className="btn w-lg" type="submit" name="submit">
+                  Submit Request
+                </Button>
+              </Form>
             </div>
-
-            <div className="input-group">
-              <label>
-                Choose Side<span className="required">*</span>:
-              </label>
-              <div>
-                <Field type="radio" id="left" name="sideOption" value="left" />
-                <label htmlFor="left">Left</label>
-              </div>
-              <div>
-                <Field type="radio" id="right" name="sideOption" value="right" />
-                <label htmlFor="right">Right</label>
-              </div>
-              <div>
-                <Field type="radio" id="both" name="sideOption" value="both" />
-                <label htmlFor="both">Both</label>
-              </div>
-              <ErrorMessage name="sideOption" component="div" className="error" />
-            </div>
-
-            <div className="input-group">
-              <label>
-                Surgeon Name<span className="required">*</span>:
-              </label>
-              <Field type="text" name="surgeonName" placeholder="Enter surgeon's name" />
-              <ErrorMessage name="surgeonName" component="div" className="error" />
-            </div>
-
-            <div className="input-group">
-              <label>Upload File (Optional):</label>
-              <input
-                type="file"
-                onChange={(event) => setFieldValue("file", event.currentTarget.files[0])}
-                accept=".jpg,.jpeg,.png,.pdf"
-              />
-              <ErrorMessage name="file" component="div" className="error" />
-            </div>
-
-            <button type="submit" className="button">Request</button>
-          </Form>
-        )}
-      </Formik>
-      <ToastContainer />
-    </div>
+          </Col>
+        </CardBody>
+      </Card>
+    </React.Fragment>
   );
 };
-export default RequestPage
+
+export default RequestForm;
