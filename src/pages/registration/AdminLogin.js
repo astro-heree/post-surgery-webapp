@@ -15,7 +15,7 @@ import {
   FormGroup,
 } from "reactstrap";
 
-const Login = () => {
+const AdminLogin = (prop) => {
   const [isLogin, setIsLogin] = useState(true)
   
   const validation = useFormik({
@@ -23,17 +23,10 @@ const Login = () => {
     initialValues: {
       user_id: "",
       password: "",
-      dob: "",
-      surgeon_name: ""
     },
     validationSchema: Yup.object({
       user_id: Yup.string().required("Please Enter Your User Id"),
       password: Yup.string().required("Please Enter Your Password"),
-      dob: !isLogin ? Yup.date()
-      .required('Please select your Date of Birth')
-      .max(new Date(), 'Date of Birth cannot be in the future')
-      : "",
-      surgeon_name: !isLogin ? Yup.string().required("Please Enter Your Surgeon Name") : ""
     }),
 
     onSubmit: (values) => {
@@ -41,7 +34,7 @@ const Login = () => {
         const item = localStorage.getItem("user");
         const user = item ? JSON.parse(item) : null;
         if (user && user.password === values.password) {
-          window.location.href = "/request-check";
+          window.location.href = "/admin-page";
         } else {
           alert("Invalid username or password");
         }
@@ -64,14 +57,14 @@ const Login = () => {
   }
   return (
     <React.Fragment>
-      <div className="bg-dark text-white min-vh-80 d-flex align-items-center" style={{height: "80vh"}}>
+      <div className="bg-dark text-white d-flex align-items-center" style={{height: "80vh"}}>
         <Container>
           <Row className="justify-content-center">
             <Col md={6} lg={5}>
               <Card className="bg-secondary text-white">
                 <CardBody>
                   <h2 className="text-center mb-4">
-                    {isLogin ? "Login" : "Signup"}
+                    {isLogin ? "Admin Login" : "Admin Signup"}
                   </h2>
                   <Form
                     onSubmit={(e) => {
@@ -130,58 +123,6 @@ const Login = () => {
                         </FormFeedback>
                       ) : null}
                     </FormGroup>
-                    {!isLogin && (
-                      <>
-                        <FormGroup>
-                          <Label className="fw-semibold">
-                            Date Of Birth
-                            <span className="text-danger">*</span>
-                          </Label>
-                          <Input
-                            name="dob"
-                            type="date"
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.dob || ""}
-                            invalid={
-                              validation.touched.dob && validation.errors.dob
-                                ? true
-                                : false
-                            }
-                          />
-                          {validation.touched.dob && validation.errors.dob ? (
-                            <FormFeedback>
-                              {validation.errors.dob}
-                            </FormFeedback>
-                          ) : null}
-                        </FormGroup>
-                        <FormGroup>
-                          <Label className="fw-semibold">
-                            Surgeon Name
-                          </Label>
-                          <Input
-                            name="surgeon_name"
-                            placeholder="Enter Surgeon Name"
-                            type="text"
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.surgeon_name || ""}
-                            invalid={
-                              validation.touched.surgeon_name &&
-                              validation.errors.surgeon_name
-                                ? true
-                                : false
-                            }
-                          />
-                          {validation.touched.surgeon_name &&
-                          validation.errors.surgeon_name ? (
-                            <FormFeedback>
-                              {validation.errors.surgeon_name}
-                            </FormFeedback>
-                          ) : null}
-                        </FormGroup>
-                      </>
-                    )}
                     <Button color="primary" type="submit" className="w-100">
                       {isLogin ? "Login" : "Signup"}
                     </Button>
@@ -207,5 +148,5 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default AdminLogin;
 
