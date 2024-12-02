@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { ModalTitle } from 'react-bootstrap'
 import { Button, Input, Modal, ModalBody, ModalFooter } from 'reactstrap'
 
-const MessageModal = ({showModal, title, handleConfirm, handleCancel, confirmationText, message, setMessage}) => {
-    
+const MessageModal = ({ showModal, title, handleConfirm, handleCancel, confirmationText, message, setMessage }) => {
+
   return (
     <Modal isOpen={showModal} centered>
       <ModalBody>
@@ -11,16 +11,18 @@ const MessageModal = ({showModal, title, handleConfirm, handleCancel, confirmati
           {title}
         </ModalTitle>
         <div className='py-3'>
-            <Input 
-                placeholder='Enter Message'
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-            />
+          <Input
+            placeholder='Enter Message'
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+          />
         </div>
       </ModalBody>
       <ModalFooter className="d-flex justify-content-end">
         <Button className='btn btn-lg btn-rumi-blue'
-          onClick={() => handleConfirm()}>
+          onClick={() => handleConfirm()}
+          disabled={message.length == 0}
+        >
           Send
         </Button>
         <Button className='btn btn-lg btn-danger'

@@ -10,7 +10,7 @@ const UserSelection = () => {
                 window.location.href = "/login"
                 break
             default:
-                window.location.href = "/coming-soon"
+                window.location.href = "/surgeon-login"
                 break
         }
     }

@@ -179,7 +179,7 @@ const Admin = () => {
 
 
     return (
-        <div className="bg-dark min-vh-80 text-white d-flex flex-column" style={{ height: "80vh" }}>
+        <div className="bg-dark text-white d-flex flex-column" style={{ height: "80vh" }}>
             <Container className="my-5">
                 <h2 className="text-center mb-4">Admin Dashboard</h2>
                 <MessageModal
