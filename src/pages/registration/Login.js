@@ -17,23 +17,25 @@ import {
 
 const Login = () => {
   const [isLogin, setIsLogin] = useState(true)
-  
+  const [isDob, setIsDob] = useState(true)
   const validation = useFormik({
     enableReinitialize: false,
     initialValues: {
       user_id: "",
       password: "",
       dob: "",
-      surgeon_name: ""
+      surgeon_name: "",
+      patient_id: "",
     },
     validationSchema: Yup.object({
       user_id: Yup.string().required("Please Enter Your User Id"),
       password: Yup.string().required("Please Enter Your Password"),
-      dob: !isLogin ? Yup.date()
-      .required('Please select your Date of Birth')
-      .max(new Date(), 'Date of Birth cannot be in the future')
-      : "",
-      surgeon_name: !isLogin ? Yup.string().required("Please Enter Your Surgeon Name") : ""
+      dob: (!isLogin && isDob) ? Yup.date()
+        .required('Please select your Date of Birth')
+        .max(new Date(), 'Date of Birth cannot be in the future')
+        : "",
+      surgeon_name: "",
+      patient_id: (!isLogin && !isDob) ? Yup.number().required("Please Enter Patient Id") : ""
     }),
 
     onSubmit: (values) => {
@@ -64,7 +66,7 @@ const Login = () => {
   }
   return (
     <React.Fragment>
-      <div className="bg-dark text-white min-vh-80 d-flex align-items-center" style={{height: "80vh"}}>
+      <div className="bg-dark text-white min-vh-80 d-flex align-items-center" style={{ height: "80vh" }}>
         <Container>
           <Row className="justify-content-center">
             <Col md={6} lg={5}>
@@ -93,13 +95,13 @@ const Login = () => {
                         value={validation.values.user_id || ""}
                         invalid={
                           validation.touched.user_id &&
-                          validation.errors.user_id
+                            validation.errors.user_id
                             ? true
                             : false
                         }
                       />
                       {validation.touched.user_id &&
-                      validation.errors.user_id ? (
+                        validation.errors.user_id ? (
                         <FormFeedback>
                           {validation.errors.user_id}
                         </FormFeedback>
@@ -118,13 +120,13 @@ const Login = () => {
                         value={validation.values.password || ""}
                         invalid={
                           validation.touched.password &&
-                          validation.errors.password
+                            validation.errors.password
                             ? true
                             : false
                         }
                       />
                       {validation.touched.password &&
-                      validation.errors.password ? (
+                        validation.errors.password ? (
                         <FormFeedback>
                           {validation.errors.password}
                         </FormFeedback>
@@ -133,27 +135,68 @@ const Login = () => {
                     {!isLogin && (
                       <>
                         <FormGroup>
-                          <Label className="fw-semibold">
-                            Date Of Birth
-                            <span className="text-danger">*</span>
+                          <Label className="fw-semibold w-100">
+                            <div className="row align-items-center">
+                              <div className="col-auto d-flex align-items-center">
+                                <span>{isDob ? 'Date of Birth' : 'Patient Id'}</span>
+                                <span className="text-danger me-1">*</span>
+                              </div>
+                              <div className="col text-end">
+                                <span
+                                  onClick={() => { setIsDob(!isDob); }}
+                                  className="text-white"
+                                  style={{ cursor: 'pointer', textDecoration: 'underline' }}
+                                >
+                                  {isDob ? 'Enter Patient Id?' : 'Enter Date of Birth?'}
+                                </span>
+                              </div>
+                            </div>
                           </Label>
-                          <Input
-                            name="dob"
-                            type="date"
-                            onChange={validation.handleChange}
-                            onBlur={validation.handleBlur}
-                            value={validation.values.dob || ""}
-                            invalid={
-                              validation.touched.dob && validation.errors.dob
-                                ? true
-                                : false
-                            }
-                          />
-                          {validation.touched.dob && validation.errors.dob ? (
-                            <FormFeedback>
-                              {validation.errors.dob}
-                            </FormFeedback>
-                          ) : null}
+                          {
+                            isDob ?
+                              <>
+                                <Input
+                                  name="dob"
+                                  type="date"
+                                  onChange={validation.handleChange}
+                                  onBlur={validation.handleBlur}
+                                  value={validation.values.dob || ""}
+                                  invalid={
+                                    validation.touched.dob && validation.errors.dob
+                                      ? true
+                                      : false
+                                  }
+                                />
+                                {validation.touched.dob && validation.errors.dob ? (
+                                  <FormFeedback>
+                                    {validation.errors.dob}
+                                  </FormFeedback>
+                                ) : null}
+                              </>
+                              :
+                              <>
+                                <Input
+                                  name="patient_id"
+                                  type="number"
+                                  placeholder="Enter Patient Id"
+                                  onChange={validation.handleChange}
+                                  onBlur={validation.handleBlur}
+                                  value={validation.values.patient_id || ""}
+                                  invalid={
+                                    validation.touched.patient_id && validation.errors.patient_id
+                                      ? true
+                                      : false
+                                  }
+
+                                />
+                                {validation.touched.patient_id && validation.errors.patient_id ? (
+                                  <FormFeedback>
+                                    {validation.errors.patient_id}
+                                  </FormFeedback>
+                                ) : null}
+                              </>
+                          }
+
                         </FormGroup>
                         <FormGroup>
                           <Label className="fw-semibold">
@@ -168,17 +211,11 @@ const Login = () => {
                             value={validation.values.surgeon_name || ""}
                             invalid={
                               validation.touched.surgeon_name &&
-                              validation.errors.surgeon_name
+                                validation.errors.surgeon_name
                                 ? true
                                 : false
                             }
                           />
-                          {validation.touched.surgeon_name &&
-                          validation.errors.surgeon_name ? (
-                            <FormFeedback>
-                              {validation.errors.surgeon_name}
-                            </FormFeedback>
-                          ) : null}
                         </FormGroup>
                       </>
                     )}
